@@ -366,13 +366,7 @@ mvn test
 ### Ejecutar solo tests unitarios
 
 ```bash
-mvn test -Dtest=*Test
-```
-
-### Ejecutar tests de integración
-
-```bash
-mvn verify
+mvn test -Dtest=*ServiceTest
 ```
 
 ### Coverage report
@@ -381,6 +375,8 @@ mvn verify
 mvn jacoco:report
 # Ver: target/site/jacoco/index.html
 ```
+
+**📚 Documentación completa:** Ver [TESTING.md](TESTING.md)
 
 ---
 
