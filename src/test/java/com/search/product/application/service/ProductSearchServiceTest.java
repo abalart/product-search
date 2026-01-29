@@ -136,7 +136,7 @@ class ProductSearchServiceTest {
         
         // Then
         assertThat(results).hasSize(1);
-        assertThat(results.getFirst()).isEqualTo(testProduct);
+        assertThat(results.get(0)).isEqualTo(testProduct);
         verify(productRepository).autocomplete(query, limit);
     }
     

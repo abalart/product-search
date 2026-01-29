@@ -18,11 +18,12 @@ import java.util.concurrent.TimeUnit;
 @Slf4j
 @Component
 @RequiredArgsConstructor
+@SuppressWarnings("null")
 public class RedisCacheRepositoryAdapter implements CacheRepository {
-    
+
     private final RedisTemplate<String, String> redisTemplate;
     private final ObjectMapper objectMapper;
-    
+
     @Override
     public <T> Optional<T> get(String key, Class<T> type) {
         try {
@@ -30,10 +31,10 @@ public class RedisCacheRepositoryAdapter implements CacheRepository {
             if (value == null) {
                 return Optional.empty();
             }
-            
+
             T object = objectMapper.readValue(value, type);
             return Optional.of(object);
-            
+
         } catch (JsonProcessingException e) {
             log.error("Error deserializing cache value for key: {}", key, e);
             return Optional.empty();
@@ -42,7 +43,7 @@ public class RedisCacheRepositoryAdapter implements CacheRepository {
             return Optional.empty();
         }
     }
-    
+
     @Override
     public <T> void put(String key, T value) {
         try {
@@ -54,7 +55,7 @@ public class RedisCacheRepositoryAdapter implements CacheRepository {
             log.error("Error putting value in cache for key: {}", key, e);
         }
     }
-    
+
     @Override
     public <T> void put(String key, T value, long ttlSeconds) {
         try {
@@ -66,7 +67,7 @@ public class RedisCacheRepositoryAdapter implements CacheRepository {
             log.error("Error putting value in cache with TTL for key: {}", key, e);
         }
     }
-    
+
     @Override
     public void evict(String key) {
         try {
@@ -75,16 +76,16 @@ public class RedisCacheRepositoryAdapter implements CacheRepository {
             log.error("Error evicting cache for key: {}", key, e);
         }
     }
-    
+
     @Override
     public void clear() {
         try {
-            redisTemplate.getConnectionFactory().getConnection().flushAll();
+            redisTemplate.getConnectionFactory().getConnection().serverCommands().flushDb();
         } catch (Exception e) {
             log.error("Error clearing all cache", e);
         }
     }
-    
+
     @Override
     public boolean exists(String key) {
         try {

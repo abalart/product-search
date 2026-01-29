@@ -12,7 +12,6 @@ import org.mapstruct.Mapping;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
 
 /**
  * REST Mapper for DTOs

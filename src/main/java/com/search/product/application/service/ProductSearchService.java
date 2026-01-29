@@ -71,7 +71,9 @@ public class ProductSearchService {
         
         // Try cache first for common searches
         if (isCacheable(criteria)) {
-            Optional<PageResult> cachedResult = cacheRepository.get(cacheKey, PageResult.class);
+            @SuppressWarnings("unchecked")
+            Optional<PageResult<Product>> cachedResult = 
+                (Optional<PageResult<Product>>) (Optional<?>) cacheRepository.get(cacheKey, PageResult.class);
             if (cachedResult.isPresent()) {
                 log.debug("Search result found in cache");
                 return cachedResult.get();
@@ -174,6 +176,7 @@ public class ProductSearchService {
     /**
      * Fallback when circuit breaker is open for findById
      */
+    @SuppressWarnings("unused")
     private Optional<Product> findByIdFallback(String id, Exception e) {
         log.error("Circuit breaker activated for findById: {}", id, e);
         return Optional.empty();
@@ -182,6 +185,7 @@ public class ProductSearchService {
     /**
      * Fallback when circuit breaker is open for search
      */
+    @SuppressWarnings("unused")
     private PageResult<Product> searchFallback(SearchCriteria criteria, Exception e) {
         log.error("Circuit breaker activated for search", e);
         return PageResult.empty(criteria.getPage(), criteria.getSize());

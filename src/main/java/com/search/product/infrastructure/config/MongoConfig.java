@@ -9,6 +9,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.data.mongodb.config.AbstractMongoClientConfiguration;
 import org.springframework.data.mongodb.core.MongoTemplate;
+import org.springframework.lang.NonNull;
 
 import java.util.concurrent.TimeUnit;
 
@@ -17,29 +18,32 @@ import java.util.concurrent.TimeUnit;
  * Optimized connection pool and timeout settings for high performance
  */
 @Configuration
+@SuppressWarnings("null")
 public class MongoConfig extends AbstractMongoClientConfiguration {
-    
+
     @Value("${spring.data.mongodb.uri}")
     private String mongoUri;
-    
+
     @Value("${spring.data.mongodb.database}")
     private String databaseName;
-    
+
     @Override
+    @NonNull
     protected String getDatabaseName() {
         return databaseName;
     }
-    
+
     @Override
     @Bean
+    @NonNull
     public MongoClient mongoClient() {
         ConnectionString connectionString = new ConnectionString(mongoUri);
-        
+
         MongoClientSettings settings = MongoClientSettings.builder()
                 .applyConnectionString(connectionString)
                 .applyToConnectionPoolSettings(builder -> builder
                         .maxSize(100) // Max connections in pool
-                        .minSize(10)  // Min connections to maintain
+                        .minSize(10) // Min connections to maintain
                         .maxWaitTime(2000, TimeUnit.MILLISECONDS)
                         .maxConnectionIdleTime(60000, TimeUnit.MILLISECONDS)
                         .maxConnectionLifeTime(3600000, TimeUnit.MILLISECONDS))
@@ -47,11 +51,12 @@ public class MongoConfig extends AbstractMongoClientConfiguration {
                         .connectTimeout(5000, TimeUnit.MILLISECONDS)
                         .readTimeout(10000, TimeUnit.MILLISECONDS))
                 .build();
-        
+
         return MongoClients.create(settings);
     }
-    
+
     @Bean
+    @NonNull
     public MongoTemplate mongoTemplate() {
         return new MongoTemplate(mongoClient(), getDatabaseName());
     }
