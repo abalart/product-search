@@ -1,0 +1,55 @@
+version: '3.8'
+
+services:
+  mongodb:
+    image: mongo:6.0
+    container_name: product-search-mongodb
+    restart: unless-stopped
+    ports:
+      - "27017:27017"
+    environment:
+      MONGO_INITDB_DATABASE: product_search
+    volumes:
+      - mongodb_data:/data/db
+      - ./mongo-init.js:/docker-entrypoint-initdb.d/mongo-init.js:ro
+    networks:
+      - product-search-network
+
+  redis:
+    image: redis:7-alpine
+    container_name: product-search-redis
+    restart: unless-stopped
+    ports:
+      - "6379:6379"
+    command: redis-server --appendonly yes
+    volumes:
+      - redis_data:/data
+    networks:
+      - product-search-network
+
+  product-search-app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: product-search-app
+    restart: unless-stopped
+    ports:
+      - "8080:8080"
+    environment:
+      SPRING_DATA_MONGODB_URI: mongodb://mongodb:27017
+      SPRING_DATA_MONGODB_DATABASE: product_search
+      SPRING_DATA_REDIS_HOST: redis
+      SPRING_DATA_REDIS_PORT: 6379
+    depends_on:
+      - mongodb
+      - redis
+    networks:
+      - product-search-network
+
+networks:
+  product-search-network:
+    driver: bridge
+
+volumes:
+  mongodb_data:
+  redis_data:
