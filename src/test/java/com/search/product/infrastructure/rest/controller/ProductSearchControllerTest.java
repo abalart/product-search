@@ -13,6 +13,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
+import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.web.servlet.MockMvc;
 
 import java.math.BigDecimal;
@@ -28,6 +29,11 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
  * Integration tests for ProductSearchController
  */
 @WebMvcTest(controllers = ProductSearchController.class)
+@TestPropertySource(properties = {
+    "spring.autoconfigure.exclude=org.springframework.boot.autoconfigure.data.mongo.MongoDataAutoConfiguration," +
+        "org.springframework.boot.autoconfigure.mongo.MongoAutoConfiguration," +
+        "org.springframework.boot.autoconfigure.data.redis.RedisAutoConfiguration"
+})
 class ProductSearchControllerTest {
     
     @Autowired
