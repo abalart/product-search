@@ -5,6 +5,8 @@ import com.search.product.application.service.ProductSearchService;
 import com.search.product.domain.model.PageResult;
 import com.search.product.domain.model.Product;
 import com.search.product.domain.model.SearchCriteria;
+import com.search.product.infrastructure.config.MongoConfig;
+import com.search.product.infrastructure.config.RedisConfig;
 import com.search.product.infrastructure.rest.dto.SearchRequest;
 import com.search.product.infrastructure.rest.mapper.RestMapper;
 import org.junit.jupiter.api.BeforeEach;
@@ -12,6 +14,8 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.context.annotation.ComponentScan;
+import org.springframework.context.annotation.FilterType;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 
@@ -27,7 +31,18 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 /**
  * Integration tests for ProductSearchController
  */
-@WebMvcTest(ProductSearchController.class)
+@WebMvcTest(
+    controllers = ProductSearchController.class,
+    excludeAutoConfiguration = {
+        org.springframework.boot.autoconfigure.data.mongo.MongoDataAutoConfiguration.class,
+        org.springframework.boot.autoconfigure.mongo.MongoAutoConfiguration.class,
+        org.springframework.boot.autoconfigure.data.redis.RedisAutoConfiguration.class
+    },
+    excludeFilters = @ComponentScan.Filter(
+        type = FilterType.ASSIGNABLE_TYPE,
+        classes = {MongoConfig.class, RedisConfig.class}
+    )
+)
 class ProductSearchControllerTest {
     
     @Autowired
